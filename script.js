@@ -1,40 +1,41 @@
 // Write your JavaScript code here!
-
-window.addEventListener("load", function() {
- 
-    httpGet("https://handlers.education.launchcode.org/static/planets.json")
-       let listedPlanets;
-       // Set listedPlanetsResponse equal to the value returned by calling myFetch()
-       let listedPlanetsResponse;
-       listedPlanetsResponse.then(function (result) {
-           listedPlanets = result;
-           console.log(listedPlanets);
-       }).then(function () {
-           console.log(listedPlanets);
-       })
-       
+if (typeof window !== 'undefined') {
+    window.addEventListener("load", function() {
+        const url = "https://handlers.education.launchcode.org/static/planets.json";
+        fetchData(url); 
     });
-    function httpGet(theUrl)
-    {
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
-        xmlHttp.send( null );
-        const div = document.getElementById("missionTarget")
-        let arr=JSON.parse(xmlHttp.responseText);
-        let i =Math.floor(Math.random() * 6);
-        console.log(arr[0].image+" hello")
-        div.innerHTML = `
-                     <h2>Mission Destination</h2>
-                     <ol>
-                         <li>Name:${arr[i].name}  </li>
-                         <li>Diameter:${arr[i].diameter} </li>
-                         <li>Star: ${arr[i].star}</li>
-                         <li>Distance from Earth: ${arr[i].distance} </li>
-                         <li>Number of Moons: ${arr[i].moons}</li>
-                     </ol>
-                     <img src=${arr[i].image}>`
-        return xmlHttp.responseText;
-    }
+}
+//function to get planetary data 
+function fetchData(url) {
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);  
+            displayRandomPlanet(data);
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
+
+//function to display Planetary data
+function displayRandomPlanet(planets) {
+    const div = document.getElementById("missionTarget");
+    let i = Math.floor(Math.random() * planets.length);
+    div.innerHTML = `
+        <h2>Mission Destination</h2>
+        <ol>
+            <li>Name: ${planets[i].name}</li>
+            <li>Diameter: ${planets[i].diameter}</li>
+            <li>Star: ${planets[i].star}</li>
+            <li>Distance from Earth: ${planets[i].distance}</li>
+            <li>Number of Moons: ${planets[i].moons}</li>
+        </ol>
+        <img src="${planets[i].image}" alt="${planets[i].name} Image">
+    `;
+}
+//issue with window object... node does not have window object so it was throwing an error, I wrapped it in an if statement.
+    if (typeof window !== 'undefined') {
     window.addEventListener("click", function(){
     document.getElementById("formSubmit").addEventListener('click', function(e){
        
@@ -110,3 +111,4 @@ window.addEventListener("load", function() {
        e.preventDefault()
     })
     })
+}
